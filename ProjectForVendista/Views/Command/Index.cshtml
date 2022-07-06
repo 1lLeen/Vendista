@@ -1,0 +1,297 @@
+﻿@model ProjectForVendista.Models.Repository
+@{
+    Layout = null;
+    List<SelectListItem> commandNames = new List<SelectListItem>();
+    foreach(var items in Model.Commands)
+    {
+        commandNames.Add(
+            new SelectListItem
+            {
+                Text = items.name,
+                Value = items.name + "," + Model.Token
+            }
+            );
+
+    }
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="main">
+        <div id="container" class="navbar navbar-inverse navbar-fixed-top" style="background-color: #373737;">
+            <img class="icons" id="logo-img" src="https://p.vendista.ru/images/logo_header_2_2x.png" alt="Alternate Text" />
+            <p>Личный кабинет - Отправка команд на терминал</p>
+            <a href="#" id="profile">
+                <img class="icons" id="user-img" src="https://p.vendista.ru/images/user.svg" alt="Alternate Text" />
+                <strong><p style="margin-right:30px;">@User.Identity.Name</p></strong>
+            </a>
+            <a href="#"><img id="exit" class="icons" src="@Url.Content("/Icons/exit.png")" alt="Alternate Text" /></a>
+        </div>
+        <div id="body-main">
+            <div class="sidenav">
+                <a href="#"><img class="icon-bar menu-icons" src="@Url.Content("/Icons/customers.png")" alt="Alternate Text" />Клиенты</a>
+                <a href="#"><img class="icon-bar menu-icons" src="@Url.Content("/Icons/users.png")" />Пользователи</a>
+                <a href="#"><img class="icon-bar menu-icons" src="@Url.Content("/Icons/terminal.png")" />Терминалы</a>
+                <a href="#"><img class="icon-bar menu-icons" src="@Url.Content("/Icons/bank.png")" />TID Банка</a>
+                <a href="#"><img class="icon-bar menu-icons" src="@Url.Content("/Icons/transition.png")" />Транзакции</a>
+                <a href="#"><img class="icon-bar menu-icons" src="@Url.Content("/Icons/log_terminals.png")" />Логи терминалов</a>
+                <a href="#"><img class="icon-bar menu-icons" src="@Url.Content("/Icons/cash.png")" />Кассы</a>
+                <br />
+                <a href="#">
+                    <img class="icon-bar menu-icons" src="@Url.Content("/Icons/customers.png")" alt="Alternate Text" />
+                    <img class="icon-bar menu-icons" src="@Url.Content("/Icons/log_terminals.png")" alt="Alternate Text" /> Привязать терминалы к клиенту списком
+                </a>
+            </div>
+            <br />
+            <div id="command-container">
+                <h3>Отправка команд на терминал</h3>
+                <div id="body-data">
+                    @using (Html.BeginForm("Index", "Command", FormMethod.Post))
+                    {
+                        <div id="commands">
+
+
+                            <label>Команда</label><br />
+                            @Html.DropDownList("value", commandNames, new { onchange = "this.form.submit()" })
+
+                        </div>
+                    }
+                    @using (Html.BeginForm("SendDataDB", "Command", FormMethod.Post))
+                    {
+
+
+
+                        <div id="data-terminals">
+                            <div id="id-terminals">
+                                <label>ID Терминала(ов)</label><br />
+                                <textarea id="user-id-terminals" name="userIdTerminals">129</textarea>
+                            </div>
+                        </div>
+                        <div id="inputs-data">
+                            @if (Model.command != null)
+                            {
+
+                                string param1 = Model.command.parameter_name1;
+                                string param2 = Model.command.parameter_name2;
+                                string param3 = Model.command.parameter_name3;
+                                if (Model.command.parameter_name1 != null)
+                                {
+                                    @Html.Label("Param1");
+                                    <input name="Param1" ,id="param1" , placeholder="@param1" type="text" /><br />
+                                }
+                                if (Model.command.parameter_name2 != null)
+                                {
+                                    @Html.Label("Param2");
+                                    <input name="Param2" ,id="param2" , placeholder="@param2" type="text" /><br />
+                                    }
+                                if (Model.command.parameter_name3 != null)
+                                {
+                                    @Html.Label("Param3");
+                                    <input name="Param3" ,id="param3" , placeholder="@param3" type="text" /><br />
+                                    }
+
+
+                            }
+                        </div>
+                        <div id="btns-data">
+                            <button class="btn btn-danger" id="back">Назад</button>
+                            <input class="btn btn-success" type="submit" id="send" value="Отправить">
+                        </div>
+
+                    }
+                </div><br />
+                <div class="info-table">
+                    <table class="table">
+                        <tr>
+                            <th>№</th>
+                            <th>Дата и время</th>
+                            <th>Команда</th>
+                            <th>Параметр 1</th>
+                            <th>Параметр 2</th>
+                            <th>Параметр 3</th>
+                            <th>Статус</th>
+                        </tr>
+                        @{
+                            var lst = Model.History.histories.ToList();
+                            lst.Reverse();
+                         }
+                            @foreach (var items in lst)
+                            {
+                             <tr>
+                                <td>@items.Id</td>
+                                <td>@items.DateTime</td>
+                                <td>@items.Command</td>
+                                <td>@items.Param1</td>
+                                <td>@items.Param2</td>
+                                <td>@items.Param3</td>
+                                <td>@items.Status</td>                        
+                             </tr>
+                            }
+                    </table>
+                </div>
+            </div>
+
+            </div>
+    </div>
+
+</body>
+</html>
+<script>
+    function selectChange(val) {
+        //Set the value of action in action attribute of form element.
+        //Submit the form
+        $('#myForm').submit();
+    }
+
+</script>
+<style>
+
+
+    #commands{
+        margin-left:5%;
+    }
+    #back {
+        width: 100px;
+    }
+
+    #btns-data {
+        display: flex;
+        justify-content: center;
+    }
+
+    #body-data button {
+        margin-left: 5%;
+    }
+
+    #data-terminals {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #body-data {
+        display:flex;
+        flex-direction:row-reverse;
+        justify-content:space-between;
+        background-color: #ddedff;
+        width: 100%;
+    }
+
+    #command-container {
+        width: 70%;
+    }
+
+    #id-terminals textarea {
+        height: 300px;
+        width: 500px;
+        resize: none;
+    }
+
+    #data-terminals {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #id-terminals, #commands {
+        margin: 0%;
+    }
+
+    #command-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #body-main {
+        display: flex;
+        flex-direction: row;
+    }
+
+        #body-main #command-container {
+            margin-left: 25%;
+            margin-top: 1%;
+        }
+
+    .menu-icons {
+        width: 25px;
+        height: 25px;
+    }
+
+    #main {
+        display: block;
+        flex-direction: column;
+    }
+
+    .sidenav {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 280px;
+        position: fixed;
+        background-color: #111;
+        overflow-x: hidden;
+        padding-top: 20px;
+        background-color: #fff;
+        border-right: 2px solid #484848
+    }
+
+        .sidenav img {
+            margin: 5px;
+        }
+
+        .sidenav a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            color: #818181;
+            margin: 10px;
+        }
+
+            .sidenav a:hover {
+                color: #3b3b3b
+            }
+
+    #container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        color: #fff;
+        font-family: Microsoft YaHei UI Light;
+        padding: 5px;
+    }
+
+    #profile {
+        display: flex;
+        color: #fff;
+        margin-left: 50%;
+    }
+
+    a:hover {
+        text-decoration: none;
+        color: #fff;
+    }
+
+    #exit {
+        margin-bottom: 5px;
+    }
+
+    #container p {
+        margin-left: 10%;
+    }
+
+    #logo-img {
+        width: 120px;
+        height: 40px;
+    }
+
+    .icons {
+        width: 20px;
+        height: 20px;
+    }
+</style>

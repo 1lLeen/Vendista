@@ -1,0 +1,90 @@
+﻿@model ProjectForVendista.Models.Auth.FormModel.LoginModel
+@{
+    Layout = null;
+
+    
+ }
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color:#373737">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="https://p.vendista.ru/Auth/Login?ReturnUrl=%2F"><img src="https://p.vendista.ru/images/logo_header_2_2x.png" width="160" height="80" style="padding:23px; margin:3px;"></a> 
+            </div>
+        </div>
+    </div>
+    <div id="form">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+        <div class="form-horizontal data">
+            <img src="https://p.vendista.ru/images/user.svg" alt="Alternate Text" style="width:100px; height:50px;" />
+            <hr />
+            <h3>Необходима авторизация</h3>
+            <hr />
+            <div class="form-group form-input">
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control inp-data",@id = "login", placeholder = "Ваш Логин" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control inp-data", @id="password", placeholder="Ваш Пароль", type = "password" }})
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group form-input">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Войти" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    <style>
+
+        .btn {
+            background: -webkit-gradient(linear, left top, right top, from(#6cd8c6), to(#38a7a3));
+            margin-right: 15%;
+            width: 200px;
+            background-color: #1abc9c;
+            color: #fff;
+            border-radius: 4px;
+        }
+        .inp-data {
+            border: none;
+            display: block;
+            width: 600px;
+            background: none;
+            text-align: center;
+            border-bottom: 2px solid #cdd3e4;
+            font-size:24px;
+            padding:4.5px;
+            margin:5%;
+        }
+        .inp-data:active, :hover, :focus {
+            outline: 0;
+            outline-offset: 0;
+        }
+        #form{
+            display:flex;
+            text-align:center;
+            margin:10%;
+            vertical-align:central;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            margin-left:5%;
+        }
+    </style>
+</body>
