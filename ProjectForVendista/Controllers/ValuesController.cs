@@ -18,15 +18,15 @@ namespace ProjectForVendista.Controllers
     {
 
         #region Partner
-        private string pLogin = "part";
-        private string pPassword = "part";
+        private string pLogin = "user2";
+        private string pPassword = "password2";
         #endregion
         #region Client
-        private string cLogin = "demo";
-        private string cPassword = "demo15";
+        private string cLogin = "user1";
+        private string cPassword = "password1";
         #endregion
-        private string swagger = "http://178.57.218.210:198/";
-
+        private string swagger = "http://178.57.218.210:398/";
+        private string token = "";
 
         private WebResponse Request(string server, string method,string type)
         {
@@ -58,7 +58,6 @@ namespace ProjectForVendista.Controllers
         [HttpGet]
         public List<BodyCommand> GetCommands(string token)
         {
-            token = GetTokenSwagger(pLogin, pPassword);
             var response = Request(swagger, $"commands/types?token={token}","GET");
             using (Stream stream = response.GetResponseStream())
             {
@@ -79,7 +78,6 @@ namespace ProjectForVendista.Controllers
         [HttpGet]
         public List<BodyTerminal> GetTerminals(string token)
         {
-            token = GetTokenSwagger(pLogin, pPassword);
             var response = Request(swagger, $"terminals?token={token}","GET");
             using(Stream stream = response.GetResponseStream())
             {
@@ -99,9 +97,6 @@ namespace ProjectForVendista.Controllers
         [HttpPost]
         public CommandTerminal SendCommandTerminals(int idTerminal, string token, MultyCommandTerminal command)
         {
-
-            token = GetTokenSwagger(pLogin, pPassword);
-
             var request = (HttpWebRequest)WebRequest.CreateHttp($"{swagger}terminals/{idTerminal}/commands?token={token}") as HttpWebRequest;
             var json = JsonConvert.SerializeObject(command);
             if (!string.IsNullOrEmpty(json)) 
@@ -124,33 +119,6 @@ namespace ProjectForVendista.Controllers
                 }
             }
 
-        }
-
-        // GET api/values
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/values/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
         }
     }
 }

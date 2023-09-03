@@ -1,11 +1,11 @@
 ﻿using ProjectForVendista.Models.ModelsCommands;
 using ProjectForVendista.Models.ModelsTerminals;
-using ProjectForVendista.Models.ModelsTable.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using ProjectForVendista.Models.ModelsTable;
+using ProjectForVendista.Models.ModelsContext;
 
 namespace ProjectForVendista.Models
 {
@@ -15,14 +15,14 @@ namespace ProjectForVendista.Models
         public List<BodyCommand> Commands { get; set; }
         public BodyCommand command;
         public List<BodyTerminal> Terminals { get; set; }
-        public HistoryContext History { get; set; }
+        public Context db { get; set; }
         public List<History> reverseHistory { get; set; }
-        public Repository(string token, List<BodyCommand> commands, List<BodyTerminal> terminals, HistoryContext history) 
+        public Repository(string token, List<BodyCommand> commands, List<BodyTerminal> terminals, Context history) 
         {
             Token = token;
             Commands = commands;
             Terminals = terminals;
-            History = history;
+            db = history;
         }
         public Repository(string token, List<BodyCommand> commands, List<BodyTerminal> terminals)
         {

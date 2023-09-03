@@ -111,22 +111,22 @@
                 </div><br />
                 <div class="info-table">
                     <table class="table">
-                        <tr>
-                            <th>№</th>
-                            <th>Дата и время</th>
-                            <th>Команда</th>
-                            <th>Параметр 1</th>
-                            <th>Параметр 2</th>
-                            <th>Параметр 3</th>
-                            <th>Статус</th>
+                        <tr id="command_column">
+                            <th class="item_command_column">№</th>
+                            <th class="item_command_column">Дата и время</th>
+                            <th class="item_command_column">Команда</th>
+                            <th class="item_command_column">Параметр 1</th>
+                            <th class="item_command_column">Параметр 2</th>
+                            <th class="item_command_column">Параметр 3</th>
+                            <th class="item_command_column">Статус</th>
                         </tr>
                         @{
-                            var lst = Model.History.histories.ToList();
+                            var lst = Model.db.histories.ToList();
                             lst.Reverse();
                          }
                             @foreach (var items in lst)
                             {
-                             <tr>
+                             <tr >
                                 <td>@items.Id</td>
                                 <td>@items.DateTime</td>
                                 <td>@items.Command</td>
@@ -155,9 +155,15 @@
 </script>
 <style>
 
+   
+    .item_command_column {
+        font-size: 15px;
+        background-color:#2b2b2b;
+        color:#fff;
+    }
 
-    #commands{
-        margin-left:5%;
+    #commands {
+        margin-left: 5%;
     }
     #back {
         width: 100px;

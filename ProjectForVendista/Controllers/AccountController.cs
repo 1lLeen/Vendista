@@ -7,8 +7,9 @@ using System.Web.Security;
 using ProjectForVendista.Controllers;
 using ProjectForVendista.Models;
 using ProjectForVendista.Models.Auth;
-using ProjectForVendista.Models.Auth.Context;
 using ProjectForVendista.Models.Auth.FormModel;
+using ProjectForVendista.Models.ModelsContext;
+
 namespace ProjectForVendista.Controllers
 {
     public class AccountController : Controller
@@ -24,7 +25,7 @@ namespace ProjectForVendista.Controllers
             if (ModelState.IsValid)
             {
                 User user = null;
-                using(UserContext db = new UserContext()) 
+                using(Context db = new Context()) 
                 {
                     user = db.users.FirstOrDefault(u => u.Name == model.Name && u.Password == model.Password);
                     if (user!=null) 

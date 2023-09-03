@@ -1,9 +1,7 @@
 ﻿using ProjectForVendista.Models;
 using ProjectForVendista.Models.Auth;
-using ProjectForVendista.Models.Auth.Context;
 using ProjectForVendista.Models.ModelsCommands;
 using ProjectForVendista.Models.ModelsTerminals;
-using ProjectForVendista.Models.ModelsTable.Context;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using ProjectForVendista.Models.ModelsTable;
+using ProjectForVendista.Models.ModelsContext;
 
 namespace ProjectForVendista.Controllers
 {
@@ -20,23 +19,23 @@ namespace ProjectForVendista.Controllers
     public class CommandController : Controller
     {
         private static ValuesController values = new ValuesController();
-        private static UserContext uContext = new UserContext();
+        private static Context uContext = new Context();
         private static string commandName;
         private static string token;
-        private BodyCommand GetCommand(string commandName,string token) 
+        private BodyCommand GetCommand(string commandName) 
         {
             return values.GetCommands(token).FirstOrDefault(c => c.name == commandName);
         }
-        public Repository HandleData(string commandName, string token)
+        public Repository HandleData(string commandName)
         {
-            Repository repos = new Repository(token, values.GetCommands(token), values.GetTerminals(token), new HistoryContext());
+            Repository repos = new Repository(token, values.GetCommands(token), values.GetTerminals(token), new Context());
             repos.SetLastCommand(repos.Commands.FirstOrDefault(c => c.name == commandName));
             return repos;
         }
         public Repository UnboxingUser(string name, string pass)
         {
             var token = values.GetTokenSwagger(name, pass);
-            Repository modelRepos = new Repository(token, values.GetCommands(token), values.GetTerminals(token), new HistoryContext());
+            Repository modelRepos = new Repository(token, values.GetCommands(token), values.GetTerminals(token), new Context());
             return modelRepos;
         }
 
@@ -46,6 +45,7 @@ namespace ProjectForVendista.Controllers
             var repository = UnboxingUser(User.Identity.Name,
                 uContext.users.FirstOrDefault(u => u.Name == User.Identity.Name).Password);
             repository.reverseHistory = new List<History>();
+            token = values.GetTokenSwagger(User.Identity.Name, uContext.users.FirstOrDefault(u => u.Name == User.Identity.Name).Password);
             return View(repository);
         }
         [HttpPost]
@@ -53,12 +53,11 @@ namespace ProjectForVendista.Controllers
         {
             var tempArray = value.Split(',');
             commandName = tempArray[0];
-            token = tempArray[1];
-            return View(HandleData(commandName, token));
+            return View(HandleData(commandName));
         }
         private void BuildMultyCommand(MultyCommandTerminal mct , string commandParameterName1, string commandParameterName2, string commandParameterName3)
         {
-            BodyCommand command = GetCommand(commandName, token);
+            BodyCommand command = GetCommand(commandName);
             mct.command_id = command.id;
             mct.parameter1 = Convert.ToInt32(commandParameterName1);
             mct.parameter2 = Convert.ToInt32(commandParameterName2);
@@ -75,7 +74,7 @@ namespace ProjectForVendista.Controllers
         }
         public ActionResult SendDataDB(string userIdTerminals, string Param1, string Param2, string Param3)
         {
-            using(HistoryContext db = new HistoryContext()) 
+            using(Context db = new Context()) 
             {
                 MultyCommandTerminal mct = new MultyCommandTerminal();
                 BuildMultyCommand(mct, Param1, Param2, Param3);
