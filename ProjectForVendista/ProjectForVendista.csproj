@@ -178,6 +178,7 @@
       <DependentUpon>202309030925521_AddNewUser.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Auth\FormModel\RegistrationModel.cs" />
     <Compile Include="Models\ModelsContext\Context.cs" />
     <Compile Include="Models\Auth\FormModel\LoginModel.cs" />
     <Compile Include="Models\Auth\User.cs" />
@@ -243,6 +244,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Command\Index.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

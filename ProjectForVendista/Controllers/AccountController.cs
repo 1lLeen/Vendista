@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Http.Results;
 using System.Web.Mvc;
 using System.Web.Security;
 using ProjectForVendista.Controllers;
@@ -14,33 +15,56 @@ namespace ProjectForVendista.Controllers
 {
     public class AccountController : Controller
     {
-        public ActionResult Login()
-        {
-            return View();
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model) 
         {
-            if (ModelState.IsValid)
+            if (model == null)
+                return View(model);
+            else
             {
-                User user = null;
-                using(Context db = new Context()) 
-                {
-                    user = db.users.FirstOrDefault(u => u.Name == model.Name && u.Password == model.Password);
-                    if (user!=null) 
+             
+                    User user = null;
+                    using (Context db = new Context())
                     {
+                        user = db.users.FirstOrDefault(u => u.Name == model.Name && u.Password == model.Password);
+                        if (user != null)
+                        {
+                            FormsAuthentication.SetAuthCookie(model.Name, true);
+
+                            return RedirectToAction("Index", "Command");
+                        }
+                        else
+                        {
+                            return View(model);
+                        }
+                    }
+         
+            }
+        }
+        public ActionResult Register(RegistrationModel model)
+        {
+            if(model == null) return View();
+      
+                using (Context db = new Context()) 
+                {
+                    var user = db.users.FirstOrDefault(u => u.Name == model.Name && u.Password == model.Password);
+                    if(user == null)
+                    {
+                        db.users.Add(new User
+                        {
+                            Name = model.Name,
+                            Password = model.Password,
+                        });
+                        db.SaveChanges();
                         FormsAuthentication.SetAuthCookie(model.Name, true);
-                     
                         return RedirectToAction("Index", "Command");
                     }
                     else
                     {
-                        ModelState.AddModelError("444", "Not login");
+                        return View();
                     }
                 }
-            }
-            return View();
+
+            
         }
     }
 }
